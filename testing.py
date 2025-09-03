@@ -23,6 +23,6 @@ print("Drone moved forward.")
 client.moveByVelocityAsync(0, 0, -5, 3).join()
 print("Drone moved upward.")
 
-# Move forward
+
 client.moveByVelocityAsync(5, 0, 0, 3).join()
 print("Drone moved forward.")
