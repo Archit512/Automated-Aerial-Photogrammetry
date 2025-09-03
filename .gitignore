@@ -1,0 +1,29 @@
+# Ignore Python cache and environment files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+
+# Ignore AirSimNH build and binary files
+WindowsNoEditor/
+*.exe
+*.dll
+*.pdb
+*.bin
+*.ubulk
+*.uexp
+*.umap
+*.uasset
+
+# Ignore logs and saved configs
+**/Saved/
+**/Logs/
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore VS Code settings
+.vscode/
