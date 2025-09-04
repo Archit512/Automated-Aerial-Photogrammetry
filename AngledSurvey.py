@@ -59,7 +59,8 @@ class PhotogrammetrySurvey:
         takeoff_tasks = [self.client.takeoffAsync(vehicle_name=drone) for drone in self.vehicle_names]
         
         # Allow the drones to complete the previous command before executing the next one.
-        airsim.wait_all_tasks(takeoff_tasks)
+        for task in takeoff_tasks:
+            task.join()
         print("Takeoff complete.")
 
         # Set hover position for each drone.
@@ -68,7 +69,8 @@ class PhotogrammetrySurvey:
             self.client.moveToPositionAsync(0, 0, z, self.speed, vehicle_name=drone)
             for drone, z in zip(self.vehicle_names, self.flight_heights)
         ]
-        airsim.wait_all_tasks(hover_tasks)
+        for task in hover_tasks:
+            task.join()
         print("All drones are hovering at their designated heights.")
 
     def set_camera_angles(self, yaw_angle):
@@ -120,7 +122,8 @@ class PhotogrammetrySurvey:
                     self.client.moveToPositionAsync(interp_x, interp_y, z, self.speed, vehicle_name=drone)
                     for drone, z in zip(self.vehicle_names, self.flight_heights)
                 ]
-                airsim.wait_all_tasks(move_tasks)
+                for task in move_tasks:
+                    task.join()
                 time.sleep(0.5) # Give a moment for the drone to stabilize at the new position
 
                 print(f"Capturing images at ({interp_x:.2f}, {interp_y:.2f})")
@@ -158,7 +161,8 @@ class PhotogrammetrySurvey:
         # Send drones to start position, disarm them and disconnect from the airsim environment.
         print("Returning to home and landing...")
         go_home_tasks = [self.client.goHomeAsync(vehicle_name=drone) for drone in self.vehicle_names]
-        airsim.wait_all_tasks(go_home_tasks)
+        for task in go_home_tasks:
+            task.join()
         time.sleep(2)
 
         print("Disarming all drones...")
