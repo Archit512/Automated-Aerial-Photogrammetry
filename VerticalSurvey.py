@@ -59,7 +59,8 @@ class VerticalSurvey:
         takeoff_tasks = [self.client.takeoffAsync(vehicle_name=drone) for drone in self.vehicle_names]
         
         # Allow the drones to complete the previous command before executing the next one.
-        airsim.wait_all_tasks(takeoff_tasks)
+        for task in takeoff_tasks:
+            task.join()
         print("Takeoff complete.")
 
         # Define hover position and move drones
@@ -68,7 +69,8 @@ class VerticalSurvey:
             self.client.moveToPositionAsync(self.survey_area["start_x"], self.survey_area["start_y"], z, self.speed, vehicle_name=drone)
             for drone, z in zip(self.vehicle_names, self.flight_heights)
         ]
-        airsim.wait_all_tasks(hover_tasks)
+        for task in hover_tasks:
+            task.join()
         print("All drones are hovering at their designated heights.")
         time.sleep(5)
 
@@ -89,7 +91,8 @@ class VerticalSurvey:
             self.client.moveToPositionAsync(x, y, z, self.speed, vehicle_name=drone)
             for drone, z in zip(self.vehicle_names, self.flight_heights)
         ]
-        airsim.wait_all_tasks(move_tasks)
+        for task in move_tasks:
+            task.join()
         time.sleep(0.5)
         self.save_images(x, y)
         time.sleep(0.5)
@@ -173,7 +176,8 @@ class VerticalSurvey:
         # Send drones to start position, disarm them and disconnect from the airsim environment.
         print("Returning to home and landing...")
         go_home_tasks = [self.client.goHomeAsync(vehicle_name=drone) for drone in self.vehicle_names]
-        airsim.wait_all_tasks(go_home_tasks)
+        for task in go_home_tasks:
+            task.join()
         time.sleep(2)
 
         print("Disarming all drones...")
