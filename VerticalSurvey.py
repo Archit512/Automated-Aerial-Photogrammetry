@@ -87,6 +87,10 @@ class VerticalSurvey:
 
     def _move_and_capture(self, x, y):
         """Helper method to move drones and capture images."""
+        # Convert NumPy types to standard Python floats to avoid serialization errors
+        x = float(x)
+        y = float(y)
+        
         move_tasks = [
             self.client.moveToPositionAsync(x, y, z, self.speed, vehicle_name=drone)
             for drone, z in zip(self.vehicle_names, self.flight_heights)
