@@ -66,7 +66,7 @@ class PhotogrammetrySurvey:
         # Set hover position for each drone.
         print("Moving to initial hover heights...")
         hover_tasks = [
-            self.client.moveToPositionAsync(0, 0, z, self.speed, vehicle_name=drone)
+            self.client.moveToPositionAsync(0, 0, z, self.speed, vehicle_name=drone, lookahead=-1)
             for drone, z in zip(self.vehicle_names, self.flight_heights)
         ]
         for task in hover_tasks:
@@ -177,16 +177,16 @@ def main():
     # --- CONFIGURATION ---
     # Define the drone vehicles and their relative flight parameters.
     DRONE_NAMES = ["Drone1", "Drone2", "Drone3", "Drone4", "Drone5"]
-    FLIGHT_HEIGHTS = [-1.2, -2.1, -4, -8, -15] # Negative Z values for height above ground
-    CAMERA_PITCH_ANGLES = [-3, -6, -9, -13, -25] # Pitch angles in degrees
+    FLIGHT_HEIGHTS = [-1.8, -2.7, -4, -6, -10] # Negative Z values for height above ground
+    CAMERA_PITCH_ANGLES = [-5, -7, -9, -13, -20] # Pitch angles in degrees
 
     # Define the survey area using four corners (x, y)
     # The order of waypoints defines the flight path (e.g., clockwise or counter-clockwise)
     SURVEY_WAYPOINTS = [
-        (0, 0),    # Corner 1
-        (0, 42),   # Corner 2
-        (46, 42),  # Corner 3
-        (46, 0)    # Corner 4
+        (0, 5),    # Corner 1
+        (0, 41),   # Corner 2
+        (46, 41),  # Corner 3
+        (46, 5)    # Corner 4
     ]
 
     # Define flight parameters
