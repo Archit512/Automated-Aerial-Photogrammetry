@@ -141,9 +141,10 @@ class CombinedSurveyManager:
         # Start both surveys simultaneously
         print("\nLaunching both survey threads...")
         self.angled_thread.start()
-        time.sleep(2)  # Small delay to stagger the start
+        time.sleep(20)  # Small delay to stagger the start
         self.vertical_thread.start()
-        
+        time.sleep(20)
+        print("\nBoth surveys are now in progress...")
         # Wait for both surveys to complete
         print("\nWaiting for surveys to complete...")
         self.angled_thread.join()
