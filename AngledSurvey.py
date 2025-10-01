@@ -140,11 +140,11 @@ class PhotogrammetrySurvey:
                 ]
                 for task in move_tasks:
                     task.join()
-                time.sleep(0.5) # Give a moment for the drone to stabilize at the new position
+                time.sleep(1.5) # Give more time for the drone to stabilize at the new position
 
                 print(f"Capturing images at ({interp_x:.2f}, {interp_y:.2f})")
                 self.save_images(interp_x, interp_y)
-                time.sleep(0.5) # Give a moment for the capture to complete
+                time.sleep(1.0) # Give more time for the capture to complete
 
         print("Survey path complete.")
 
