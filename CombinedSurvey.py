@@ -64,8 +64,8 @@ class CombinedSurveyManager:
         """Configure the vertical survey parameters."""
         # Define the vertical survey configuration
         VERTICAL_DRONE_NAMES = ["Drone6", "Drone7"]
-        VERTICAL_FLIGHT_HEIGHTS = [-25, -27]  # Negative Z values for height above ground
-        VERTICAL_CAMERA_PITCH_ANGLE = -89     # Camera pitch angle in degrees (close to straight down)
+        VERTICAL_FLIGHT_HEIGHTS = [-25, -25]  # Both drones at same height
+        VERTICAL_CAMERA_PITCH_ANGLE = -90     # Exactly nadir (straight down)
         
         # Define the survey area
         VERTICAL_SURVEY_AREA = {
