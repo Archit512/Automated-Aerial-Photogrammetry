@@ -92,14 +92,14 @@ class CombinedSurveyManager:
     def run_angled_survey(self):
         """Run the angled survey in a separate thread."""
         try:
-            print("\\n[ANGLED SURVEY] Starting angled survey...")
+            print("\n[ANGLED SURVEY] Starting angled survey...")
             self.angled_survey.connect_and_arm()
             self.angled_survey.takeoff_and_hover()
             self.angled_survey.fly_and_capture()
             self.survey_results["angled"] = "SUCCESS"
-            print("\\n[ANGLED SURVEY] Angled survey completed successfully!")
+            print("\n[ANGLED SURVEY] Angled survey completed successfully!")
         except Exception as e:
-            print(f"\\n[ANGLED SURVEY] An error occurred in angled survey: {e}")
+            print(f"\n[ANGLED SURVEY] An error occurred in angled survey: {e}")
             self.survey_results["angled"] = f"ERROR: {e}"
         finally:
             if self.angled_survey:
@@ -108,14 +108,14 @@ class CombinedSurveyManager:
     def run_vertical_survey(self):
         """Run the vertical survey in a separate thread."""
         try:
-            print("\\n[VERTICAL SURVEY] Starting vertical survey...")
+            print("\n[VERTICAL SURVEY] Starting vertical survey...")
             self.vertical_survey.connect_and_arm()
             self.vertical_survey.takeoff_and_hover()
             self.vertical_survey.fly_and_capture()
             self.survey_results["vertical"] = "SUCCESS"
-            print("\\n[VERTICAL SURVEY] Vertical survey completed successfully!")
+            print("\n[VERTICAL SURVEY] Vertical survey completed successfully!")
         except Exception as e:
-            print(f"\\n[VERTICAL SURVEY] An error occurred in vertical survey: {e}")
+            print(f"\n[VERTICAL SURVEY] An error occurred in vertical survey: {e}")
             self.survey_results["vertical"] = f"ERROR: {e}"
         finally:
             if self.vertical_survey:
@@ -139,18 +139,18 @@ class CombinedSurveyManager:
         self.vertical_thread = threading.Thread(target=self.run_vertical_survey, name="VerticalSurveyThread")
         
         # Start both surveys simultaneously
-        print("\\nLaunching both survey threads...")
+        print("\nLaunching both survey threads...")
         self.angled_thread.start()
         time.sleep(2)  # Small delay to stagger the start
         self.vertical_thread.start()
         
         # Wait for both surveys to complete
-        print("\\nWaiting for surveys to complete...")
+        print("\nWaiting for surveys to complete...")
         self.angled_thread.join()
         self.vertical_thread.join()
         
         # Print final results
-        print("\\n" + "=" * 60)
+        print("\n" + "=" * 60)
         print("SURVEY COMPLETION REPORT")
         print("=" * 60)
         print(f"Angled Survey Status: {self.survey_results['angled']}")
