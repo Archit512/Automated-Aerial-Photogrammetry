@@ -4,6 +4,7 @@ import time
 import os
 import numpy as np # type is ignore
 import math
+from datetime import datetime
 
 class PhotogrammetrySurvey:
     """
@@ -13,7 +14,7 @@ class PhotogrammetrySurvey:
     fly a predefined path, and capture images for photogrammetry.
     """
 
-    def __init__(self, vehicle_names, flight_heights, survey_waypoints, image_spacing, speed, camera_pitch_angles):
+    def __init__(self, vehicle_names, flight_heights, survey_waypoints, image_spacing, speed, camera_pitch_angles, survey_type="AngledSurvey"):
         """
         Initializes the survey object with required parameters.
 
@@ -24,6 +25,7 @@ class PhotogrammetrySurvey:
             image_spacing (float): The distance in meters between each image capture point.
             speed (float): The speed of the drones in m/s.
             camera_pitch_angles (list): The pitch angles (in degrees) for each drone's camera.
+            survey_type (str): Type of survey for directory naming (default: "AngledSurvey").
         """
         self.client = airsim.MultirotorClient()
         self.vehicle_names = vehicle_names
@@ -32,6 +34,20 @@ class PhotogrammetrySurvey:
         self.image_spacing = image_spacing
         self.speed = speed
         self.camera_pitch_angles = camera_pitch_angles
+        
+        # Create unique directory name using current date and time
+        current_time = datetime.now()
+        if os.path.sep in survey_type:
+            # survey_type contains a path, use it directly
+            self.survey_directory = survey_type
+        else:
+            # survey_type is just a name, add timestamp
+            self.survey_directory = current_time.strftime(f"{survey_type}_%Y%m%d_%H%M%S")
+        
+        # Create the directory if it doesn't exist
+        if not os.path.exists(self.survey_directory):
+            os.makedirs(self.survey_directory)
+            print(f"Created survey directory: {self.survey_directory}")
 
     def connect_and_arm(self):
         """Connects to AirSim and arms all drones."""
@@ -153,8 +169,9 @@ class PhotogrammetrySurvey:
                 # Create a filename with a timestamp, drone name, and position
                 timestamp = time.strftime("%Y%m%d-%H%M%S")
                 filename = f"image_{drone_name}_{timestamp}_x{x:.0f}_y{y:.0f}.png"
-                airsim.write_png(os.path.normpath(filename), img_rgb)
-                print(f"Saved image from {drone_name} as {filename}")
+                filepath = os.path.join(self.survey_directory, filename)
+                airsim.write_png(os.path.normpath(filepath), img_rgb)
+                print(f"Saved image from {drone_name} as {filepath}")
 
     def land_and_disarm(self):
         """Lands all drones and disarms them."""

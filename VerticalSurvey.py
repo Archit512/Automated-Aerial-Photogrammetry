@@ -4,6 +4,7 @@ import time
 import os
 import numpy as np # type: ignore
 import math
+from datetime import datetime
 
 class VerticalSurvey:
     """
@@ -13,7 +14,7 @@ class VerticalSurvey:
     capture top-down images for photogrammetry.
     """
 
-    def __init__(self, vehicle_names, flight_heights, survey_area, image_spacing, speed, camera_pitch_angle):
+    def __init__(self, vehicle_names, flight_heights, survey_area, image_spacing, speed, camera_pitch_angle, survey_type="VerticalSurvey"):
         """
         Initializes the survey object with required parameters.
 
@@ -24,6 +25,7 @@ class VerticalSurvey:
             image_spacing (float): The distance in meters between each image capture point.
             speed (float): The speed of the drones in m/s.
             camera_pitch_angle (float): The camera pitch angle in degrees (should be close to -90 for vertical shots).
+            survey_type (str): Type of survey for directory naming (default: "VerticalSurvey").
         """
         self.client = airsim.MultirotorClient()
         self.vehicle_names = vehicle_names
@@ -32,6 +34,20 @@ class VerticalSurvey:
         self.image_spacing = image_spacing
         self.speed = speed
         self.camera_pitch_angle = camera_pitch_angle
+        
+        # Create unique directory name using current date and time
+        current_time = datetime.now()
+        if os.path.sep in survey_type:
+            # survey_type contains a path, use it directly
+            self.survey_directory = survey_type
+        else:
+            # survey_type is just a name, add timestamp
+            self.survey_directory = current_time.strftime(f"{survey_type}_%Y%m%d_%H%M%S")
+        
+        # Create the directory if it doesn't exist
+        if not os.path.exists(self.survey_directory):
+            os.makedirs(self.survey_directory)
+            print(f"Created survey directory: {self.survey_directory}")
 
     def connect_and_arm(self):
         """Connects to AirSim and arms all drones."""
@@ -172,8 +188,9 @@ class VerticalSurvey:
                 # Create a filename with a timestamp, drone name, and position
                 timestamp = time.strftime("%Y%m%d-%H%M%S")
                 filename = f"image_{drone_name}_{timestamp}_x{x:.0f}_y{y:.0f}.png"
-                airsim.write_png(os.path.normpath(filename), img_rgb)
-                print(f"Saved image from {drone_name} as {filename}")
+                filepath = os.path.join(self.survey_directory, filename)
+                airsim.write_png(os.path.normpath(filepath), img_rgb)
+                print(f"Saved image from {drone_name} as {filepath}")
 
     def land_and_disarm(self):
         """Lands all drones and disarms them."""

@@ -8,6 +8,36 @@ venv/
 
 # Ignore AirSimNH build and binary files
 WindowsNoEditor/
+
+# Large media files that cause push issues
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+
+# Image files from surveys (too large for git)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+
+# Survey output directories
+Survey_*/
+AngledSurvey_*/
+VerticalSurvey_*/
+ArchitGoyal_AshutoshPandey_Photogrammetry/
+
+# IDE and system files
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+*.log
+*.tmp
 *.exe
 *.dll
 *.pdb
