@@ -89,6 +89,7 @@ class PhotogrammetrySurvey:
             task.join()
         print("All drones are hovering at their designated heights.")
 
+        
     def set_camera_angles(self, yaw_angle):
         """
         Sets the camera pitch and yaw for all drones.
@@ -96,57 +97,67 @@ class PhotogrammetrySurvey:
         Args:
             yaw_angle (float): The yaw angle in degrees to face the target.
         """
-        # After moving to each corner, change orientation of cameras to face the structure we are surveying.
         print(f"Adjusting camera angles for all drones to face yaw {yaw_angle}...")
+        # Move camera slightly forward (e.g., 1.00 meters along X-axis)
+        offset_distance = 2.0
+        yaw_rad = math.radians(yaw_angle)
+        offset_x = offset_distance * math.cos(yaw_rad)
+        offset_y = offset_distance * math.sin(yaw_rad)
+        camera_offset = airsim.Vector3r(offset_x, offset_y, -0.2)   
+
         for drone, pitch in zip(self.vehicle_names, self.camera_pitch_angles):
-            camera_pose = airsim.Pose(airsim.Vector3r(0, 0, 0), airsim.to_quaternion(math.radians(pitch), 0, math.radians(yaw_angle)))
+            # Use a less negative pitch if needed (e.g., max(-10, pitch))
+            safe_pitch = max(-10, pitch)
+            camera_pose = airsim.Pose(camera_offset, airsim.to_quaternion(math.radians(safe_pitch), 0, math.radians(yaw_angle)))
             self.client.simSetCameraPose("0", camera_pose, vehicle_name=drone)
-        time.sleep(1) # Small delay to ensure the pose is set
+        time.sleep(1)
 
     def fly_and_capture(self):
-        """
-        Flies the drones along the survey path and captures images at intervals.
-        """
-        # Define camera orientation, drone path, image generation and file path for each drone.
-        print(" - - - - - Starting Survey - - - - - ")
-        num_waypoints = len(self.survey_waypoints)
-        if num_waypoints < 2:
-            print("Not enough waypoints to create a path.")
-            return
+            """
+            Flies the drones along the survey path and captures images at intervals.
+            """
+            # Define camera orientation, drone path, image generation and file path for each drone.
+            print(" - - - - - Starting Survey - - - - - ")
+            num_waypoints = len(self.survey_waypoints)
+            if num_waypoints < 2:
+                print("Not enough waypoints to create a path.")
+                return
 
-        for i in range(num_waypoints):
-            start_x, start_y = self.survey_waypoints[i]
-            end_x, end_y = self.survey_waypoints[(i + 1) % num_waypoints]
+            for i in range(num_waypoints):
+                start_x, start_y = self.survey_waypoints[i]
+                end_x, end_y = self.survey_waypoints[(i + 1) % num_waypoints]
 
-            # Calculate the direction and number of steps
-            dx = end_x - start_x
-            dy = end_y - start_y
-            distance = math.sqrt(dx**2 + dy**2)
-            num_steps = int(distance / self.image_spacing)
-            yaw_angle = math.degrees(math.atan2(dy, dx)) - 90  # Adjust for camera orientation
-            print(f"Flying from ({start_x}, {start_y}) to ({end_x}, {end_y}) with {num_steps} steps...")
+                # Calculate the direction and number of steps
+                dx = end_x - start_x
+                dy = end_y - start_y
+                distance = math.sqrt(dx**2 + dy**2)
+                num_steps = int(distance / self.image_spacing)
+                yaw_angle = math.degrees(math.atan2(dy, dx)) - 90  # Adjust for camera orientation
+                print(f"Flying from ({start_x}, {start_y}) to ({end_x}, {end_y}) with {num_steps} steps...")
 
-            self.set_camera_angles(yaw_angle)
+                self.set_camera_angles(yaw_angle)
 
-            for step in range(num_steps + 1):
-                # Calculate the position for this step
-                interp_x = start_x + (dx * step / num_steps)
-                interp_y = start_y + (dy * step / num_steps)
+                for step in range(num_steps + 1):
+                    # Calculate the position for this step
+                    interp_x = start_x + (dx * step / num_steps)
+                    interp_y = start_y + (dy * step / num_steps)
 
-                # Move all drones to the new position
-                move_tasks = [
-                    self.client.moveToPositionAsync(interp_x, interp_y, z, self.speed, vehicle_name=drone)
-                    for drone, z in zip(self.vehicle_names, self.flight_heights)
-                ]
-                for task in move_tasks:
-                    task.join()
-                time.sleep(1.5) # Give more time for the drone to stabilize at the new position
+                    # Move all drones to the new position
+                    move_tasks = [
+                        self.client.moveToPositionAsync(interp_x, interp_y, z, self.speed, vehicle_name=drone)
+                        for drone, z in zip(self.vehicle_names, self.flight_heights)
+                    ]
+                    for task in move_tasks:
+                        task.join()
+                    time.sleep(1.5) # Give more time for the drone to stabilize at the new position
 
-                print(f"Capturing images at ({interp_x:.2f}, {interp_y:.2f})")
-                self.save_images(interp_x, interp_y)
-                time.sleep(1.0) # Give more time for the capture to complete
+                    print(f"Capturing images at ({interp_x:.2f}, {interp_y:.2f})")
+                    self.save_images(interp_x, interp_y)
+                    time.sleep(1.0) # Give more time for the capture to complete
 
-        print("Survey path complete.")
+            print("Survey path complete.")
+
+
 
     def save_images(self, x, y):
         """
@@ -161,7 +172,7 @@ class PhotogrammetrySurvey:
         
         for i, (responses, drone_name) in enumerate(zip(responses_list, self.vehicle_names)):
             if responses:
-                response = responses[0]
+                response =  responses[0]
                 # Convert the image to a NumPy array
                 img1d = np.frombuffer(response.image_data_uint8, dtype=np.uint8)
                 img_rgb = img1d.reshape(response.height, response.width, 3)
@@ -194,8 +205,8 @@ def main():
     # --- CONFIGURATION ---
     # Define the drone vehicles and their relative flight parameters.
     DRONE_NAMES = ["Drone1", "Drone2", "Drone3", "Drone4", "Drone5"]
-    FLIGHT_HEIGHTS = [-1.8, -2.7, -4, -6, -10] # Negative Z values for height above ground
-    CAMERA_PITCH_ANGLES = [-5, -7, -9, -13, -20] # Pitch angles in degrees
+    FLIGHT_HEIGHTS  = [-1.8, -3.7, -5, -8, -11] # Negative Z values for height above ground
+    CAMERA_PITCH_ANGLES = [-3, -5, -7, -9, -11] # Pitch angles in degrees
 
     # Define the survey area using four corners (x, y)
     # The order of waypoints defines the flight path (e.g., clockwise or counter-clockwise)
