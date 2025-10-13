@@ -6,7 +6,7 @@ import numpy as np # type is ignore
 import math
 from datetime import datetime
 
-class PhotogrammetrySurvey:
+class AngledSurvey:
     """
     A class to handle a multi-drone photogrammetry survey in AirSim.
 
@@ -222,7 +222,7 @@ def main():
     DRONE_SPEED = 2 # drone speed (m/s)
 
     # --- SCRIPT EXECUTION ---
-    survey = PhotogrammetrySurvey(
+    survey = AngledSurvey(
         vehicle_names=DRONE_NAMES,
         flight_heights=FLIGHT_HEIGHTS,
         survey_waypoints=SURVEY_WAYPOINTS,

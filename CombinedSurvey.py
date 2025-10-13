@@ -3,7 +3,7 @@ import threading
 import time
 import os
 from datetime import datetime
-from AngledSurvey import PhotogrammetrySurvey
+from AngledSurvey import AngledSurvey
 from VerticalSurvey import VerticalSurvey
 
 class CombinedSurveyManager:
@@ -50,7 +50,7 @@ class CombinedSurveyManager:
         ANGLED_IMAGE_SPACING = 3  # distance between image captures (meters)
         ANGLED_DRONE_SPEED = 2    # drone speed (m/s)
 
-        self.angled_survey = PhotogrammetrySurvey(
+        self.angled_survey = AngledSurvey(
             vehicle_names=ANGLED_DRONE_NAMES,
             flight_heights=ANGLED_FLIGHT_HEIGHTS,
             survey_waypoints=ANGLED_SURVEY_WAYPOINTS,
