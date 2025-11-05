@@ -62,8 +62,8 @@
         "Drone1": {
             "VehicleType": "SimpleFlight",
             "X": 0,
-            "Y": 0,
-            "Z": -2,
+            "Y": -12,
+            "Z": -10,
             "DefaultVehicleState": "Disarmed",
             "EnableCollisionPassthrogh": false,
             "EnableCollisions": true,
@@ -78,8 +78,8 @@
         "Drone2": {
             "VehicleType": "SimpleFlight",
             "X": 0,
-            "Y": -2,
-            "Z": -2,
+            "Y": -12,
+            "Z": -8,
             "DefaultVehicleState": "Disarmed",
             "EnableCollisionPassthrogh": false,
             "EnableCollisions": true,
@@ -94,8 +94,8 @@
         "Drone3": {
             "VehicleType": "SimpleFlight",
             "X": 0,
-            "Y": -4,
-            "Z": -2,
+            "Y": -12,
+            "Z": -6,
             "DefaultVehicleState": "Disarmed",
             "EnableCollisionPassthrogh": false,
             "EnableCollisions": true,
@@ -110,8 +110,8 @@
         "Drone4": {
             "VehicleType": "SimpleFlight",
             "X": 0,
-            "Y": -6,
-            "Z": -2,
+            "Y": -12,
+            "Z": -4,
             "DefaultVehicleState": "Disarmed",
             "EnableCollisionPassthrogh": false,
             "EnableCollisions": true,
@@ -126,7 +126,7 @@
         "Drone5": {
             "VehicleType": "SimpleFlight",
             "X": 0,
-            "Y": -8,
+            "Y": -12,
             "Z": -2,
             "DefaultVehicleState": "Disarmed",
             "EnableCollisionPassthrogh": false,
@@ -142,7 +142,7 @@
         "Drone6": {
             "VehicleType": "SimpleFlight",
             "X": 0,
-            "Y": -10,
+            "Y": -14,
             "Z": -2,
             "DefaultVehicleState": "Disarmed",
             "EnableCollisionPassthrogh": false,
@@ -158,7 +158,7 @@
         "Drone7": {
             "VehicleType": "SimpleFlight",
             "X": 0,
-            "Y": -12,
+            "Y": -16,
             "Z": -2,
             "DefaultVehicleState": "Disarmed",
             "EnableCollisionPassthrogh": false,

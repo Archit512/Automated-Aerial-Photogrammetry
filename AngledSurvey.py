@@ -204,8 +204,8 @@ def main():
     """Main function to run the photogrammetry survey."""
     # --- CONFIGURATION ---
     # Define the drone vehicles and their relative flight parameters.
-    DRONE_NAMES = ["Drone1", "Drone2", "Drone3", "Drone4", "Drone5"]
-    FLIGHT_HEIGHTS  = [-1.0, -3.0, -4.5, -6.0, -8.0] # Negative Z values for height above ground
+    DRONE_NAMES = ["Drone5", "Drone4", "Drone3", "Drone2", "Drone1"]
+    FLIGHT_HEIGHTS  = [0,0,0,0,0] # Negative Z values for height above ground
     CAMERA_PITCH_ANGLES = [-2, -6, -9, -11, -12] # Pitch angles in degrees
 
     # Define the survey area using four corners (x, y)
