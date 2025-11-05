@@ -214,7 +214,7 @@ def main():
     # Same libraries and steps as AngledSurvey
     # Define the drone vehicles and their relative flight parameters.
     DRONE_NAMES = ["Drone6", "Drone7"]
-    FLIGHT_HEIGHTS = [-25, -25] # FIXED: Same height to prevent drone visibility issues  
+    FLIGHT_HEIGHTS = [-15, -15] # FIXED: Same height to prevent drone visibility issues  
     CAMERA_PITCH_ANGLE = -90 # Camera pitch angle in degrees (exactly straight down)
     
     # Define the survey area
