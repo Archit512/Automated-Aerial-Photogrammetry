@@ -67,7 +67,7 @@ class CombinedSurveyManager:
             "end_y": 41
         }
 
-        VERTICAL_IMAGE_SPACING = 8
+        VERTICAL_IMAGE_SPACING = 6
         VERTICAL_DRONE_SPEED = 3
         VERTICAL_PATTERN = "grid"
 

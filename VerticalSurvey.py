@@ -269,7 +269,7 @@ def main():
     }
 
     # Define flight parameters
-    IMAGE_SPACING = 8 # distance between image captures (meters)
+    IMAGE_SPACING = 6 # distance between image captures (meters)
     DRONE_SPEED = 3 # drone speed (m/s)
     PATTERN = "spiral" # Survey pattern: "grid" (default) or "spiral"
 
