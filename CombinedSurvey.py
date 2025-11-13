@@ -34,16 +34,16 @@ class CombinedSurveyManager:
     def setup_angled_survey(self):
         """Configure the angled survey parameters."""
         # Define the angled survey configuration
-        ANGLED_DRONE_NAMES = ["Drone1", "Drone2", "Drone3", "Drone4", "Drone5"]
-        ANGLED_FLIGHT_HEIGHTS = [-1.8, -2.7, -4, -6, -10]  # Negative Z values for height above ground
-        ANGLED_CAMERA_PITCH_ANGLES = [-5, -7, -9, -13, -20]  # Pitch angles in degrees
+        ANGLED_DRONE_NAMES = ["Drone5", "Drone4", "Drone3", "Drone2", "Drone1"]
+        ANGLED_FLIGHT_HEIGHTS = [0, 0, 0, 0, -0.5] # Negative Z values for height above ground
+        ANGLED_CAMERA_PITCH_ANGLES = [-2, -6, -9, -11, -12]  # Pitch angles in degrees
 
         # Define the survey area using four corners (x, y)
         ANGLED_SURVEY_WAYPOINTS = [
             (0, 5),    # Corner 1
-            (0, 41),   # Corner 2
-            (46, 41),  # Corner 3
-            (46, 5)    # Corner 4
+            (0, 52),   # Corner 2
+            (52, 52),  # Corner 3
+            (52, 5)    # Corner 4
         ]
 
         # Define flight parameters
@@ -64,8 +64,8 @@ class CombinedSurveyManager:
         """Configure the vertical survey parameters."""
         # Define the vertical survey configuration
         VERTICAL_DRONE_NAMES = ["Drone6", "Drone7"]
-        VERTICAL_FLIGHT_HEIGHTS = [-25, -25]  # Both drones at same height
-        VERTICAL_CAMERA_PITCH_ANGLE = -90     # Exactly nadir (straight down)
+        VERTICAL_FLIGHT_HEIGHTS = [-15, -15]  # FIXED: Same height to prevent drone visibility issues
+        VERTICAL_CAMERA_PITCH_ANGLE = -89     # Camera pitch angle in degrees (exactly straight down)
         
         # Define the survey area
         VERTICAL_SURVEY_AREA = {
@@ -76,8 +76,8 @@ class CombinedSurveyManager:
         }
 
         # Define flight parameters
-        VERTICAL_IMAGE_SPACING = 4  # distance between image captures (meters)
-        VERTICAL_DRONE_SPEED = 2    # drone speed (m/s)
+        VERTICAL_IMAGE_SPACING = 8  # distance between image captures (meters) - DOUBLED from 4 to 8
+        VERTICAL_DRONE_SPEED = 3    # drone speed (m/s)
 
         self.vertical_survey = VerticalSurvey(
             vehicle_names=VERTICAL_DRONE_NAMES,
@@ -141,9 +141,9 @@ class CombinedSurveyManager:
         # Start both surveys simultaneously
         print("\nLaunching both survey threads...")
         self.angled_thread.start()
-        time.sleep(20)  # Small delay to stagger the start
+        time.sleep(10)  # Small delay to stagger the start
         self.vertical_thread.start()
-        time.sleep(20)
+        time.sleep(10)
         print("\nBoth surveys are now in progress...")
         # Wait for both surveys to complete
         print("\nWaiting for surveys to complete...")

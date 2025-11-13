@@ -205,16 +205,16 @@ def main():
     # --- CONFIGURATION ---
     # Define the drone vehicles and their relative flight parameters.
     DRONE_NAMES = ["Drone5", "Drone4", "Drone3", "Drone2", "Drone1"]
-    FLIGHT_HEIGHTS  = [0,0,0,0,0] # Negative Z values for height above ground
+    FLIGHT_HEIGHTS  = [-1, -2, -3, -4, -5] # Negative Z values for height above ground
     CAMERA_PITCH_ANGLES = [-2, -6, -9, -11, -12] # Pitch angles in degrees
 
-    # Define the survey area using four corners (x, y)
+    # Define the survey area using four corners (x, y)based in sett
     # The order of waypoints defines the flight path (e.g., clockwise or counter-clockwise)
     SURVEY_WAYPOINTS = [
         (0, 5),    # Corner 1
-        (0, 50),   # Corner 2
-        (50, 50),  # Corner 3
-        (50, 5)    # Corner 4
+        (0, 52),   # Corner 2
+        (52, 52),  # Corner 3
+        (52, 5)    # Corner 4
     ]
 
     # Define flight parameters

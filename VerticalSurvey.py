@@ -215,7 +215,7 @@ def main():
     # Define the drone vehicles and their relative flight parameters.
     DRONE_NAMES = ["Drone6", "Drone7"]
     FLIGHT_HEIGHTS = [-15, -15] # FIXED: Same height to prevent drone visibility issues  
-    CAMERA_PITCH_ANGLE = -90 # Camera pitch angle in degrees (exactly straight down)
+    CAMERA_PITCH_ANGLE = -89 # Camera pitch angle in degrees (exactly straight down)
     
     # Define the survey area
     SURVEY_AREA = {
