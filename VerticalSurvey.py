@@ -1,4 +1,3 @@
-# Import all the required libraries.
 import airsim # type: ignore
 import time
 import os
@@ -14,7 +13,7 @@ class VerticalSurvey:
     capture top-down images for photogrammetry.
     """
 
-    def __init__(self, vehicle_names, flight_heights, survey_area, image_spacing, speed, camera_pitch_angle, survey_type="VerticalSurvey"):
+    def __init__(self, vehicle_names, flight_heights, survey_area, image_spacing, speed, camera_pitch_angle, survey_type="VerticalSurvey", pattern="grid"):
         """
         Initializes the survey object with required parameters.
 
@@ -26,6 +25,7 @@ class VerticalSurvey:
             speed (float): The speed of the drones in m/s.
             camera_pitch_angle (float): The camera pitch angle in degrees (should be close to -90 for vertical shots).
             survey_type (str): Type of survey for directory naming (default: "VerticalSurvey").
+            pattern (str): Survey pattern to use - "grid" for lawnmower pattern or "spiral" for spiral pattern (default: "grid").
         """
         self.client = airsim.MultirotorClient()
         self.vehicle_names = vehicle_names
@@ -34,6 +34,7 @@ class VerticalSurvey:
         self.image_spacing = image_spacing
         self.speed = speed
         self.camera_pitch_angle = camera_pitch_angle
+        self.pattern = pattern
         
         # Create unique directory name using current date and time
         current_time = datetime.now()
@@ -51,35 +52,29 @@ class VerticalSurvey:
 
     def connect_and_arm(self):
         """Connects to AirSim and arms all drones."""
-        # Connect to virtual environment on airsim, and enable the multirotor drones.
         print("Connecting to AirSim...")
         self.client.confirmConnection()
         for drone in self.vehicle_names:
             self.client.enableApiControl(True, drone)
             print(f"Enabling API control for {drone}...")
         
-        # Arm the drones to respond to flight commands.
         print("Arming all drones...")
         for drone in self.vehicle_names:
             self.client.armDisarm(True, drone)
         
-        # Set wind speed to zero, and set a small time delay to let the drones stabilize.
         self.client.simSetWind(airsim.Vector3r(0, 0, 0))
         time.sleep(1)
         print("All drones are connected and armed.")
 
     def takeoff_and_hover(self):
         """Performs an asynchronous takeoff for all drones and moves them to initial hover positions."""
-        # Asynchronous take-off (independent of each other).
         print("Initiating asynchronous takeoff for all drones...")
         takeoff_tasks = [self.client.takeoffAsync(vehicle_name=drone) for drone in self.vehicle_names]
         
-        # Allow the drones to complete the previous command before executing the next one.
         for task in takeoff_tasks:
             task.join()
         print("Takeoff complete.")
 
-        # Define hover position and move drones
         print("Moving to initial hover heights...")
         hover_tasks = [
             self.client.moveToPositionAsync(self.survey_area["start_x"], self.survey_area["start_y"], z, self.speed, vehicle_name=drone)
@@ -119,10 +114,20 @@ class VerticalSurvey:
 
     def fly_and_capture(self):
         """
+        Flies the drones and captures images using the selected pattern.
+        Defaults to grid pattern if no pattern is specified.
+        """
+        if self.pattern == "spiral":
+            self.fly_and_capture_spiral()
+        else:
+            self.fly_and_capture_grid()
+
+    def fly_and_capture_grid(self):
+        """
         Flies the drones in a double-grid (cross-hatch) pattern and captures images.
         This provides improved coverage and accuracy for 3D reconstruction.
         """
-        print(" - - - - - Starting Survey - - - - - ")
+        print(" - - - - - Starting Grid Survey - - - - - ")
         self.set_camera_angles()
 
         x_start = self.survey_area["start_x"]
@@ -164,7 +169,45 @@ class VerticalSurvey:
 
             current_x += self.image_spacing
 
-        print("Survey path complete.")
+        print("Grid survey path complete.")
+
+    def fly_and_capture_spiral(self):
+        """
+        Flies drones in an outward spiral pattern and captures images.
+        Suitable for circular survey areas or focused central objects.
+        """
+        print(" - - - - - Starting Spiral Survey - - - - - ")
+        self.set_camera_angles()
+
+        # Compute survey center
+        x_center = (self.survey_area["start_x"] + self.survey_area["end_x"]) / 2
+        y_center = (self.survey_area["start_y"] + self.survey_area["end_y"]) / 2
+
+        # Define spiral parameters
+        max_radius = min(
+            abs(self.survey_area["end_x"] - self.survey_area["start_x"]) / 2,
+            abs(self.survey_area["end_y"] - self.survey_area["start_y"]) / 2
+        )
+        radius_step = self.image_spacing / 2   # radial increment per step
+        theta_step = math.radians(15)          # angular increment (15° per step)
+
+        # Generate spiral waypoints
+        radius = 0
+        theta = 0
+        waypoints = []
+
+        while radius <= max_radius:
+            x = x_center + radius * math.cos(theta)
+            y = y_center + radius * math.sin(theta)
+            waypoints.append((x, y))
+            theta += theta_step
+            radius += (self.image_spacing / (2 * math.pi)) * theta_step  # smooth outward growth
+
+        # Execute movement and capture
+        for (x, y) in waypoints:
+            self._move_and_capture(x, y)
+
+        print("Spiral survey complete.")
 
     def save_images(self, x, y):
         """
@@ -226,8 +269,9 @@ def main():
     }
 
     # Define flight parameters
-    IMAGE_SPACING = 8 # distance between image captures (meters) - DOUBLED from 4 to 8
+    IMAGE_SPACING = 8 # distance between image captures (meters)
     DRONE_SPEED = 3 # drone speed (m/s)
+    PATTERN = "spiral" # Survey pattern: "grid" (default) or "spiral"
 
     # --- SCRIPT EXECUTION ---
     survey = VerticalSurvey(
@@ -236,7 +280,8 @@ def main():
         survey_area=SURVEY_AREA,
         image_spacing=IMAGE_SPACING,
         speed=DRONE_SPEED,
-        camera_pitch_angle=CAMERA_PITCH_ANGLE
+        camera_pitch_angle=CAMERA_PITCH_ANGLE,
+        pattern=PATTERN  # Optional: defaults to "grid" if not specified
     )
 
     try:

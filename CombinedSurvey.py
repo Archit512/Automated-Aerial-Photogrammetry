@@ -1,4 +1,3 @@
-# Import all the required libraries.
 import threading
 import time
 import os
@@ -22,33 +21,28 @@ class CombinedSurveyManager:
         self.vertical_thread = None
         self.survey_results = {"angled": None, "vertical": None}
         
-        # Create parent survey directory with timestamp
         current_time = datetime.now()
         self.parent_survey_directory = current_time.strftime("Survey_%Y%m%d_%H%M%S")
         
-        # Create the parent directory if it doesn't exist
         if not os.path.exists(self.parent_survey_directory):
             os.makedirs(self.parent_survey_directory)
             print(f"Created parent survey directory: {self.parent_survey_directory}")
         
     def setup_angled_survey(self):
         """Configure the angled survey parameters."""
-        # Define the angled survey configuration
         ANGLED_DRONE_NAMES = ["Drone5", "Drone4", "Drone3", "Drone2", "Drone1"]
-        ANGLED_FLIGHT_HEIGHTS = [0, 0, 0, 0, -0.5] # Negative Z values for height above ground
-        ANGLED_CAMERA_PITCH_ANGLES = [-2, -6, -9, -11, -12]  # Pitch angles in degrees
+        ANGLED_FLIGHT_HEIGHTS = [0, 0, 0, 0, -0.5]
+        ANGLED_CAMERA_PITCH_ANGLES = [-2, -6, -9, -11, -12]
 
-        # Define the survey area using four corners (x, y)
         ANGLED_SURVEY_WAYPOINTS = [
             (0, 5),    # Corner 1
             (0, 52),   # Corner 2
             (52, 52),  # Corner 3
-            (52, 5)    # Corner 4
+            (52, 5)
         ]
 
-        # Define flight parameters
-        ANGLED_IMAGE_SPACING = 3  # distance between image captures (meters)
-        ANGLED_DRONE_SPEED = 2    # drone speed (m/s)
+        ANGLED_IMAGE_SPACING = 3
+        ANGLED_DRONE_SPEED = 2
 
         self.angled_survey = AngledSurvey(
             vehicle_names=ANGLED_DRONE_NAMES,
@@ -62,12 +56,10 @@ class CombinedSurveyManager:
         
     def setup_vertical_survey(self):
         """Configure the vertical survey parameters."""
-        # Define the vertical survey configuration
         VERTICAL_DRONE_NAMES = ["Drone6", "Drone7"]
-        VERTICAL_FLIGHT_HEIGHTS = [-15, -15]  # FIXED: Same height to prevent drone visibility issues
-        VERTICAL_CAMERA_PITCH_ANGLE = -89     # Camera pitch angle in degrees (exactly straight down)
+        VERTICAL_FLIGHT_HEIGHTS = [-15, -15]
+        VERTICAL_CAMERA_PITCH_ANGLE = -89
         
-        # Define the survey area
         VERTICAL_SURVEY_AREA = {
             "start_x": 0,
             "end_x": 46,
@@ -75,9 +67,9 @@ class CombinedSurveyManager:
             "end_y": 41
         }
 
-        # Define flight parameters
-        VERTICAL_IMAGE_SPACING = 8  # distance between image captures (meters) - DOUBLED from 4 to 8
-        VERTICAL_DRONE_SPEED = 3    # drone speed (m/s)
+        VERTICAL_IMAGE_SPACING = 8
+        VERTICAL_DRONE_SPEED = 3
+        VERTICAL_PATTERN = "grid"
 
         self.vertical_survey = VerticalSurvey(
             vehicle_names=VERTICAL_DRONE_NAMES,
@@ -86,7 +78,8 @@ class CombinedSurveyManager:
             image_spacing=VERTICAL_IMAGE_SPACING,
             speed=VERTICAL_DRONE_SPEED,
             camera_pitch_angle=VERTICAL_CAMERA_PITCH_ANGLE,
-            survey_type=os.path.join(self.parent_survey_directory, "VerticalSurvey")
+            survey_type=os.path.join(self.parent_survey_directory, "VerticalSurvey"),
+            pattern=VERTICAL_PATTERN  # Optional: defaults to "grid" if not specified
         )
     
     def run_angled_survey(self):

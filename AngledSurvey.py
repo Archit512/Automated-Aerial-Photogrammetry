@@ -1,4 +1,3 @@
-# Import all the required libraries.
 import airsim # type: ignore
 import time
 import os
@@ -51,35 +50,29 @@ class AngledSurvey:
 
     def connect_and_arm(self):
         """Connects to AirSim and arms all drones."""
-        # Connect to virtual environment on airsim, and enable the multirotor drones.
         print("Connecting to AirSim...")
         self.client.confirmConnection()
         for drone in self.vehicle_names:
             self.client.enableApiControl(True, drone)
             print(f"Enabling API control for {drone}...")
         
-        # Arm the drones to respond to flight commands.
         print("Arming all drones...")
         for drone in self.vehicle_names:
             self.client.armDisarm(True, drone)
         
-        # Set wind speed to zero, and set a small time delay to let the drones stabilize.
         self.client.simSetWind(airsim.Vector3r(0, 0, 0))
         time.sleep(1)
         print("All drones are connected and armed.")
 
     def takeoff_and_hover(self):
         """Performs an asynchronous takeoff for all drones and moves them to initial hover positions."""
-        # Asynchronous take-off (independent of each other).
         print("Initiating asynchronous takeoff for all drones...")
         takeoff_tasks = [self.client.takeoffAsync(vehicle_name=drone) for drone in self.vehicle_names]
         
-        # Allow the drones to complete the previous command before executing the next one.
         for task in takeoff_tasks:
             task.join()
         print("Takeoff complete.")
 
-        # Set hover position for each drone.
         print("Moving to initial hover heights...")
         hover_tasks = [
             self.client.moveToPositionAsync(0, 0, z, self.speed, vehicle_name=drone, lookahead=-1)
