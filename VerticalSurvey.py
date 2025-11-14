@@ -263,9 +263,9 @@ def main():
     # Define the survey area
     SURVEY_AREA = {
         "start_x": 0,
-        "end_x": 46,
+        "end_x": 55,
         "start_y": 5,
-        "end_y": 41
+        "end_y": 55
     }
 
     # Define flight parameters
