@@ -4,7 +4,7 @@ __pycache__/
 *.pyo
 *.pyd
 .env
-venv/
+.venv/
 
 # Ignore AirSimNH build and binary files
 WindowsNoEditor/
@@ -27,7 +27,7 @@ WindowsNoEditor/
 
 # Survey output directories
 Survey_*/
-AngledSurvey_*/
+AngledSurveyRun_*/
 VerticalSurvey_*/
 ArchitGoyal_AshutoshPandey_Photogrammetry/
 
